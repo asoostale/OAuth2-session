@@ -26,7 +26,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(auth ->
                 auth.requestMatchers("/", "oauth2/**", "/login").permitAll()
                  /*  ==> "/", "oauth2/**", "/login" 경로에 대해서 아무나 접속할 수 있도록 설정 **그렇다면 메인페이지나 남들 다 볼 수
-                        있는 페이지는 여기에 해야겠죠?** */
+                        있는 경로는 여기에 해야겠죠?** */
                         .anyRequest().authenticated()); //그 외 나머지 경로는 로그인을 한 사람만 접속할 수 있도록 **로그인 페이지나 보안필요한 페이지는 여기에 해야겠죠?**
 
 
