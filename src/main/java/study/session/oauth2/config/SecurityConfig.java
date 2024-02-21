@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import study.session.oauth2.customforclass.CustomClientRegistrationRepo;
 import study.session.oauth2.service.CustomOAuth2UserService;
 
 @Configuration
@@ -17,6 +18,9 @@ public class SecurityConfig {
 
     // @37 구현한 service를 생성자 방식으로 등록
     private final CustomOAuth2UserService customOAuth2UserService;
+
+    // @69 커스텀한 repo를 등록해주자.
+    private final CustomClientRegistrationRepo customClientRegistrationRepo;
 
 
     //@1
@@ -39,7 +43,10 @@ public class SecurityConfig {
         * @39는 CustomOAuth2UserService
         */
         httpSecurity.oauth2Login(oauth2 ->
-                oauth2.userInfoEndpoint(userInfoEndpointConfig ->
+                oauth2
+                        .loginPage("/login")// @마지막! 해당 /login 요청 받는 url 추가
+                        .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository()) //@70 @71의 등록한 값을 넣어준다.
+                        .userInfoEndpoint(userInfoEndpointConfig ->
                         userInfoEndpointConfig.userService(customOAuth2UserService)));
 
         //@8 각각의 경로에 대해 인가작업
@@ -48,6 +55,7 @@ public class SecurityConfig {
                  /*  ==> "/", "oauth2/**", "/login" 경로에 대해서 아무나 접속할 수 있도록 설정 **그렇다면 메인페이지나 남들 다 볼 수
                         있는 경로는 여기에 해야겠죠?** */
                         .anyRequest().authenticated()); //그 외 나머지 경로는 로그인을 한 사람만 접속할 수 있도록 **로그인 페이지나 보안필요한 페이지는 여기에 해야겠죠?**
+
 
 
 
