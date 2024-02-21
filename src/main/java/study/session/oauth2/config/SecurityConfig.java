@@ -1,15 +1,23 @@
 package study.session.oauth2.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import study.session.oauth2.service.CustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor // @37 구현한 service를 생성자 방식으로 등록
 public class SecurityConfig {
+
+
+    // @37 구현한 service를 생성자 방식으로 등록
+    private final CustomOAuth2UserService customOAuth2UserService;
+
 
     //@1
     @Bean
@@ -18,9 +26,19 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable()); //@3 csrf설정 잠깐 끔.
         httpSecurity.formLogin(formlogin -> formlogin.disable()); //@4 formlogin방식 사용 X
         httpSecurity.httpBasic(httpBasic -> httpBasic.disable()); //@5 httpBasic 사용 X
-        httpSecurity.oauth2Login(Customizer.withDefaults()); //@6 oauth2Client 방식 X(일일이 다 커스텀 해야한다.) 반드시 Login 방식
+       // httpSecurity.oauth2Login(Customizer.withDefaults()); //@6 oauth2Client 방식 X(일일이 다 커스텀 해야한다.) 반드시 Login 방식
         //@7 Customizer.withDefaults() <== 잠시동안만 이렇게 디폴트로 설정. 나중에 직접 구현
 
+       /**
+        *  @38 유저 엔드포인트 설정
+        *  유저 엔드포인트 :
+        *  우리가 데이터를 받을 수 있는 UserDetailsService를 등록해주는 엔드포인트 라는 뜻
+        *  내부의 userInfoEndpointConfig 를 다시 람다식으로 구현
+        *  이 userInfoEndpointConfig에도 userService를 만들 떄 우리가 만든 CustomOAuth2UserService 를 넣어줌
+        */
+        httpSecurity.oauth2Login(oauth2 ->
+                oauth2.userInfoEndpoint(userInfoEndpointConfig ->
+                        userInfoEndpointConfig.userService(customOAuth2UserService)));
 
         //@8 각각의 경로에 대해 인가작업
         httpSecurity.authorizeHttpRequests(auth ->
