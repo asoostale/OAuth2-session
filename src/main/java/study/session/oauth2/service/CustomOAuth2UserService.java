@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import study.session.oauth2.dto.CustomOAuth2User;
 import study.session.oauth2.dto.GoogleResponse;
 import study.session.oauth2.dto.NaverResponse;
 import study.session.oauth2.dto.OAuth2Response;
@@ -62,5 +63,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         //@35 이 서비스를 config에 등록해주자.
         //@36 꺼낸 바구니에서 최종적으로 데이터를 뽑아서 여기에 로직 구현
+
+        //@39 권한을 부여할 role 값도 넣어줌
+        String role = "ROLE_USER"; //일단 강제로 하드코딩 방식
+        return new CustomOAuth2User(oAuth2Response, role);
     }
 }

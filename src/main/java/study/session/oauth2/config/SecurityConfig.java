@@ -35,6 +35,8 @@ public class SecurityConfig {
         *  우리가 데이터를 받을 수 있는 UserDetailsService를 등록해주는 엔드포인트 라는 뜻
         *  내부의 userInfoEndpointConfig 를 다시 람다식으로 구현
         *  이 userInfoEndpointConfig에도 userService를 만들 떄 우리가 만든 CustomOAuth2UserService 를 넣어줌
+        *
+        * @39는 CustomOAuth2UserService
         */
         httpSecurity.oauth2Login(oauth2 ->
                 oauth2.userInfoEndpoint(userInfoEndpointConfig ->
